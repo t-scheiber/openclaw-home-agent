@@ -1,0 +1,12 @@
+[Unit]
+Description=Run infrastructure sentinel every 15 minutes
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=15min
+RandomizedDelaySec=30s
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+

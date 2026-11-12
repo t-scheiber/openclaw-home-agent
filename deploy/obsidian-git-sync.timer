@@ -1,0 +1,12 @@
+[Unit]
+Description=Keep the OpenClaw Obsidian checkout current
+
+[Timer]
+OnBootSec=1min
+OnUnitInactiveSec=5min
+RandomizedDelaySec=15s
+Persistent=true
+Unit=obsidian-git-sync.service
+
+[Install]
+WantedBy=timers.target

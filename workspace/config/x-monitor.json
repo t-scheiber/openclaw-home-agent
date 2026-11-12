@@ -1,0 +1,38 @@
+{
+  "mode": "search",
+  "searchMaxResults": 50,
+  "maxHeadlines": 12,
+  "minEngagement": {
+    "retweets": 30,
+    "likes": 100
+  },
+  "searchKeywords": [
+    "announce",
+    "launch",
+    "introducing",
+    "unveiled",
+    "available",
+    "release",
+    "partnership",
+    "keynote",
+    "generally available",
+    "now live"
+  ],
+  "accounts": [
+    { "handle": "Apple", "label": "Apple", "kind": "company" },
+    { "handle": "Google", "label": "Google", "kind": "company" },
+    { "handle": "Microsoft", "label": "Microsoft", "kind": "company" },
+    { "handle": "Samsung", "label": "Samsung", "kind": "company" },
+    { "handle": "nvidia", "label": "Nvidia", "kind": "company" },
+    { "handle": "AMD", "label": "AMD", "kind": "company" },
+    { "handle": "OpenAI", "label": "OpenAI", "kind": "company" },
+    { "handle": "AnthropicAI", "label": "Anthropic", "kind": "company" },
+    { "handle": "Sony", "label": "Sony", "kind": "company" },
+    { "handle": "LGUS", "label": "LG", "kind": "company" },
+    { "handle": "Lenovo", "label": "Lenovo", "kind": "company" },
+    { "handle": "cursor", "label": "Cursor", "kind": "company" },
+    { "handle": "example_ceo_one", "label": "Example CEO One (Example Corp)", "kind": "ceo" },
+    { "handle": "example_ceo_two", "label": "Example CEO Two (Example Corp)", "kind": "ceo" }
+  ],
+  "stateFile": "memory/x-monitor-state.json"
+}

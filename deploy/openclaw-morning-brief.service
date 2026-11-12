@@ -1,0 +1,19 @@
+[Unit]
+Description=Generate the OpenClaw morning action brief
+After=network-online.target openclaw-gateway.service openclaw-infra-sentinel.service
+Wants=network-online.target
+OnFailure=openclaw-automation-failure@%n.service
+
+[Service]
+Type=oneshot
+User=openclaw
+Group=openclaw
+Environment=HOME=/home/openclaw
+Environment=PATH=/home/linuxbrew/.linuxbrew/bin:/usr/local/bin:/usr/bin:/bin
+EnvironmentFile=-/home/openclaw/.config/openclaw/gog-keyring.env
+EnvironmentFile=/home/openclaw/.config/openclaw/automation.env
+WorkingDirectory=/home/openclaw/.openclaw/workspace
+ExecStart=/usr/bin/node scripts/morning-brief.mjs
+UMask=0077
+TimeoutStartSec=5min
+

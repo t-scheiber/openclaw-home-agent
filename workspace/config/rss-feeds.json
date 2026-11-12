@@ -1,0 +1,17 @@
+{
+  "feeds": [
+    { "name": "The Verge", "url": "https://www.theverge.com/rss/index.xml" },
+    { "name": "Ars Technica", "url": "https://feeds.arstechnica.com/arstechnica/index" },
+    { "name": "Hacker News", "url": "https://hnrss.org/frontpage" }
+  ],
+  "maxItemsPerFeed": 8,
+  "maxHeadlines": 10,
+  "excludeTitlePatterns": [
+    "prime day",
+    "black friday",
+    "deal of the day",
+    "best deals",
+    "discounted"
+  ],
+  "stateFile": "memory/rss-monitor-state.json"
+}

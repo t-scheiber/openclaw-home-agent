@@ -1,0 +1,54 @@
+# Dependencies
+node_modules/
+.venv/
+venv/
+
+# Local configuration and secrets. Commit the *.example.* templates only.
+.env
+.env.*
+!.env.example
+*.env
+!*.env.example
+*.pem
+*.key
+*.p12
+*.token
+id_rsa*
+id_ed25519*
+credentials.json
+client_secret*.json
+openclaw.json
+openclaw.json.*
+gateway-token
+exec-approvals.json
+identity/
+devices/
+credentials/
+workspace-attestations/
+
+# Local copies of the example configuration files
+workspace/config/digest.json
+workspace/config/infra-sentinel.json
+workspace/config/morning-alexa.json
+
+# Agent runtime state, memory and generated output
+workspace/memory/
+workspace/state/
+workspace/.openclaw/
+workspace/MEMORY.md
+workspace/BOOTSTRAP.md
+services/*/output/
+state/
+agents/
+extensions/
+plugin-skills/
+
+# Logs, caches and temporary files
+logs/
+*.log
+.cache/
+coverage/
+*.tmp
+*.failed
+.DS_Store
+Thumbs.db

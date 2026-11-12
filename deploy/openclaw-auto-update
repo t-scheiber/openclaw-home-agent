@@ -1,0 +1,100 @@
+#!/bin/bash
+set -Eeuo pipefail
+
+exec 9>/run/lock/openclaw-auto-update.lock
+/usr/bin/flock -n 9 || exit 0
+
+export npm_config_cache=/var/cache/openclaw/npm-core
+export TMPDIR=/var/tmp/openclaw
+export HOME=/home/openclaw
+export OPENCLAW_CONFIG_PATH=/home/openclaw/.openclaw/openclaw.json
+export OPENCLAW_STATE_DIR=/home/openclaw/.openclaw
+
+log() {
+  echo "openclaw-auto-update: $*"
+}
+
+run_as_openclaw() {
+  /usr/sbin/runuser -u openclaw -- env \
+    HOME=/home/openclaw \
+    TMPDIR=/var/tmp/openclaw \
+    npm_config_cache=/home/openclaw/.npm \
+    OPENCLAW_CONFIG_PATH=/home/openclaw/.openclaw/openclaw.json \
+    OPENCLAW_STATE_DIR=/home/openclaw/.openclaw \
+    PATH=/home/openclaw/.local/bin:/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
+    "$@"
+}
+
+wait_ready() {
+  local attempt
+  for attempt in $(seq 1 180); do
+    if /usr/bin/curl -fsS --max-time 3 http://127.0.0.1:18789/readyz >/dev/null; then
+      return 0
+    fi
+    sleep 1
+  done
+  return 1
+}
+
+current=$(/usr/bin/node -p "require('/usr/lib/node_modules/openclaw/package.json').version")
+latest=$(/usr/bin/npm view openclaw version --json | /usr/bin/tr -d '"[:space:]')
+
+if [[ -z "$current" || -z "$latest" ]]; then
+  log "could not determine current/latest version"
+  exit 1
+fi
+
+if [[ "$current" == "$latest" ]]; then
+  log "already current ($current)"
+  exit 0
+fi
+
+if [[ "$(printf '%s\n' "$current" "$latest" | /usr/bin/sort -V | /usr/bin/tail -n 1)" != "$latest" ]]; then
+  log "refusing automatic downgrade $current -> $latest"
+  exit 1
+fi
+
+log "updating $current -> $latest"
+/usr/bin/install -d -m 0750 -o root -g root /var/backups/openclaw
+/usr/bin/cp -a /home/openclaw/.openclaw/openclaw.json \
+  "/var/backups/openclaw/openclaw.json.$(date -u +%Y%m%dT%H%M%SZ)"
+
+/usr/bin/systemctl stop openclaw-gateway.service
+
+preserve_failed_update() {
+  log "update failed; preserving installed core and migrated state for repair"
+  # A binary-only rollback can strand a newer configuration and SQLite schema.
+  # Never downgrade automatically after a migration or failed readiness check.
+  /usr/bin/systemctl stop openclaw-gateway.service || true
+}
+
+if ! /usr/bin/timeout 20m /usr/bin/npm install -g "openclaw@$latest" --no-fund --no-audit --loglevel=error; then
+  log "package update failed"
+  preserve_failed_update
+  exit 1
+fi
+
+# Keep user state and plugins owned and maintained by the gateway account.
+run_as_openclaw /usr/bin/openclaw plugins update --all || log "plugin update reported a warning"
+if ! run_as_openclaw /usr/bin/openclaw doctor --fix --non-interactive --no-workspace-suggestions; then
+  log "state migration failed"
+  preserve_failed_update
+  exit 1
+fi
+/usr/bin/chown openclaw:openclaw /home/openclaw/.openclaw/openclaw.json 2>/dev/null || true
+
+/usr/bin/systemctl start openclaw-gateway.service
+if ! wait_ready; then
+  log "new version failed readiness check"
+  preserve_failed_update
+  exit 1
+fi
+
+installed=$(/usr/bin/openclaw --version | /usr/bin/awk 'NR == 1 { print $2 }')
+if [[ "$installed" != "$latest" ]]; then
+  log "version verification failed: expected $latest, found $installed"
+  preserve_failed_update
+  exit 1
+fi
+
+log "update complete ($installed)"

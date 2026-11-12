@@ -1,0 +1,19 @@
+{
+  "name": "daily-news-digest",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "run": "node src/index.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "@sendgrid/mail": "^8.1.6",
+    "dotenv": "^17.4.2",
+    "html-to-text": "^10.0.1",
+    "nodemailer": "^9.1.1",
+    "openai": "^7.8.0",
+    "pdfkit": "^0.20.2",
+    "rss-parser": "^3.13.0"
+  }
+}

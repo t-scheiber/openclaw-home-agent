@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+skill_dir="${OBSIDIAN_SKILL_DIR:-$HOME/.openclaw/skills/obsidian-direct}"
+export OBSIDIAN_VAULT="${OBSIDIAN_VAULT:-$HOME/Obsidian/Vault}"
+
+command_name=""
+skip_next=false
+for arg in "$@"; do
+  if $skip_next; then
+    skip_next=false
+    continue
+  fi
+  case "$arg" in
+    --vault|-v)
+      skip_next=true
+      ;;
+    --json|-j)
+      ;;
+    --*)
+      ;;
+    *)
+      command_name="$arg"
+      break
+      ;;
+  esac
+done
+
+python3 "$skill_dir/scripts/obsidian_cli.py" "$@"
+
+case "$command_name" in
+  create|edit)
+    "$HOME/.local/bin/obsidian-git-sync"
+    ;;
+esac

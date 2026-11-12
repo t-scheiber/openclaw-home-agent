@@ -1,0 +1,14 @@
+[Unit]
+Description=Restrict OpenClaw Gateway ingress
+Before=openclaw-gateway.service
+After=network-pre.target
+Wants=network-pre.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/apply-openclaw-firewall.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+

@@ -1,0 +1,9 @@
+[Unit]
+Description=Prepare the complete Alexa briefing before the wake-up automation runs
+
+[Timer]
+OnCalendar=*-*-* 07:20:00 Europe/Berlin
+Persistent=false
+
+[Install]
+WantedBy=timers.target

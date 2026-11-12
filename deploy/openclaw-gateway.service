@@ -1,0 +1,34 @@
+# /etc/systemd/system/openclaw-gateway.service
+[Unit]
+Description=OpenClaw Gateway
+After=network-online.target
+Wants=network-online.target
+Requires=openclaw-gateway-firewall.service
+
+[Service]
+Type=simple
+User=openclaw
+Group=openclaw
+Environment=HOME=/home/openclaw
+Environment=PATH=/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+Environment=OPENCLAW_CONFIG_PATH=/home/openclaw/.openclaw/openclaw.json
+Environment=OPENCLAW_STATE_DIR=/home/openclaw/.openclaw
+EnvironmentFile=-/home/openclaw/.config/openclaw/op-service-account.env
+EnvironmentFile=-/home/openclaw/.config/openclaw/gog-keyring.env
+EnvironmentFile=-/home/openclaw/.config/openclaw/obsidian.env
+EnvironmentFile=-/home/openclaw/.config/openclaw/openai.env
+EnvironmentFile=-/home/openclaw/.config/openclaw/homeassistant.env
+EnvironmentFile=-/home/openclaw/.config/openclaw/gemini.env
+EnvironmentFile=-/home/openclaw/.config/openclaw/openrouter.env
+EnvironmentFile=-/home/openclaw/.config/openclaw/tavily.env
+EnvironmentFile=-/home/openclaw/.config/openclaw/composio.env
+WorkingDirectory=/home/openclaw/.openclaw/workspace
+ExecStart=/usr/bin/openclaw gateway run --port 18789
+Restart=always
+RestartSec=5
+TimeoutStopSec=30
+SuccessExitStatus=0 143
+KillMode=control-group
+
+[Install]
+WantedBy=multi-user.target

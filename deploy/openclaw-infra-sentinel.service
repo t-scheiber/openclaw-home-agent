@@ -1,0 +1,16 @@
+[Unit]
+Description=Check OpenClaw and related infrastructure
+After=network-online.target openclaw-gateway.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=openclaw
+Group=openclaw
+Environment=HOME=/home/openclaw
+Environment=PATH=/home/linuxbrew/.linuxbrew/bin:/usr/local/bin:/usr/bin:/bin
+EnvironmentFile=-/home/openclaw/.config/openclaw/automation.env
+WorkingDirectory=/home/openclaw/.openclaw/workspace
+ExecStart=/usr/bin/node scripts/infra-sentinel.mjs --notify
+SuccessExitStatus=2
+UMask=0077

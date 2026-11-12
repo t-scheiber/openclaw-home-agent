@@ -1,0 +1,20 @@
+{
+  "http": [
+    { "name": "Gateway UI", "url": "https://agent.example.com/" },
+    { "name": "Example web app", "url": "https://app.example.com/" },
+    { "name": "Example API", "url": "https://api.example.com/health" },
+    { "name": "Media requests", "url": "https://media.example.com/" },
+    { "name": "Home Assistant", "url": "https://home.example.com/" }
+  ],
+  "tcp": [
+    { "name": "Hypervisor API", "host": "192.0.2.10", "port": 8006 },
+    { "name": "App server SSH", "host": "192.0.2.20", "port": 22 }
+  ],
+  "localServices": [
+    "openclaw-gateway.service",
+    "daily-news-digest.timer"
+  ],
+  "diskWarningPercent": 85,
+  "timeoutMs": 8000,
+  "whatsappTo": "+10000000000"
+}

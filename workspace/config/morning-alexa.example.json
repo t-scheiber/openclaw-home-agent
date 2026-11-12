@@ -1,0 +1,13 @@
+{
+  "googleAccount": "user@example.com",
+  "requiredCalendarIds": [
+    "example-calendar-1@example.com",
+    "example-calendar-2@example.com"
+  ],
+  "calendarDays": 8,
+  "projects": [
+    {"label": "Personal", "id": "000000000000000000000001"},
+    {"label": "Work", "id": "000000000000000000000002"},
+    {"label": "Study", "id": "000000000000000000000003"}
+  ]
+}

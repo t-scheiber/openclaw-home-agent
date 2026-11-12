@@ -1,0 +1,11 @@
+--- SKILL.md.orig
++++ SKILL.md
+@@ -27,7 +27,7 @@
+ cd /home/openclaw/.openclaw/skills/obsidian-direct/scripts
+ 
+ # Search (fuzzy/phonetic) - uses ripgrep for speed
+-python3 obsidian_search.py "$OBSIDIAN_VAULT" "query" --limit 10 --json
++obsidian-cli --json search "query" --limit 10
+ 
+ # List notes
+ obsidian-cli --json list                    # all notes

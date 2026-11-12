@@ -1,0 +1,93 @@
+--- SKILL.md.orig
++++ SKILL.md
+@@ -10,8 +10,8 @@
+ 
+ ## Configuration
+ 
+-- **Vault Path:** `/home/openclaw/Obsidian`
+-- **Env:** `OBSIDIAN_VAULT=/home/openclaw/Obsidian`
++- **Vault Path:** `/home/openclaw/Obsidian/Vault`
++- **Env:** `OBSIDIAN_VAULT=/home/openclaw/Obsidian/Vault`
+ 
+ ## CLI Usage
+ 
+@@ -19,9 +19,10 @@
+ Scripts location: `/home/openclaw/.openclaw/skills/obsidian-direct/scripts`
+ 
+ Note: Global flags (`--vault`, `--json`) must come BEFORE the command.
++Use the allowlisted wrapper for all structured operations. It publishes successful creates and edits to GitHub before returning.
+ 
+ ```bash
+-export OBSIDIAN_VAULT=/home/openclaw/Obsidian
++export OBSIDIAN_VAULT=/home/openclaw/Obsidian/Vault
+ cd /home/openclaw/.openclaw/skills/obsidian-direct/scripts
+ 
+ # Search (fuzzy/phonetic) - uses ripgrep for speed
+@@ -27,33 +28,33 @@
+-python3 obsidian_search.py "$OBSIDIAN_VAULT" "query" --limit 10 --json
++obsidian-cli --json search "query" --limit 10
+ 
+ # List notes
+-python3 obsidian_cli.py --json list                    # all notes
+-python3 obsidian_cli.py --json list "Projects"         # in folder
++obsidian-cli --json list                    # all notes
++obsidian-cli --json list "Projects"         # in folder
+ 
+ # List folders
+-python3 obsidian_cli.py --json folders
++obsidian-cli --json folders
+ 
+ # Read note
+-python3 obsidian_cli.py --json read "Note Name"
++obsidian-cli --json read "Note Name"
+ 
+ # Create note
+-python3 obsidian_cli.py --json create "Title" -c "Content" -f "Folder" -t tag1 tag2
+-python3 obsidian_cli.py --json create "Title" -c "Content" --auto-folder  # auto-detect folder
++obsidian-cli --json create "Title" -c "Content" -f "Folder" -t tag1 tag2
++obsidian-cli --json create "Title" -c "Content" --auto-folder  # auto-detect folder
+ 
+ # Edit note
+-python3 obsidian_cli.py --json edit "Note" append -c "Text to append"
+-python3 obsidian_cli.py --json edit "Note" prepend -c "Text at start"
+-python3 obsidian_cli.py --json edit "Note" replace -c "New full content"
+-python3 obsidian_cli.py --json edit "Note" replace-section -s "Summary" -c "New section text"
++obsidian-cli --json edit "Note" append -c "Text to append"
++obsidian-cli --json edit "Note" prepend -c "Text at start"
++obsidian-cli --json edit "Note" replace -c "New full content"
++obsidian-cli --json edit "Note" replace-section -s "Summary" -c "New section text"
+ 
+ # Tags
+-python3 obsidian_cli.py --json tags
++obsidian-cli --json tags
+ 
+ # Links (incoming/outgoing)
+-python3 obsidian_cli.py --json links "Note Name"
++obsidian-cli --json links "Note Name"
+ 
+ # Suggest folder for content
+-python3 obsidian_cli.py --json suggest-folder "content text" --title "Note Title"
++obsidian-cli --json suggest-folder "content text" --title "Note Title"
+ ```
+ 
+ ## Workflow: Query Knowledge Base
+@@ -62,6 +63,6 @@
+ 1. If no folder specified → run `suggest-folder` or use `--auto-folder`
+ 2. Create note with `create` command
+ 3. Add appropriate tags based on content
+-4. Report created path to user
++4. Wait for the wrapper's Git sync to finish, then report the created path
+ 
+ ## Workflow: Edit Note by Prompt
+@@ -72,4 +73,11 @@
+ - "Перепиши заметку Y более кратко" → read note, rewrite, `edit Y replace -c "..."`
+ - "Добавь секцию 'Выводы' в заметку Z" → `edit Z replace-section -s "Выводы" -c "..."`
+ 
++## Git Synchronization
++
++- `obsidian-cli create` and `obsidian-cli edit` synchronously fetch, rebase, commit, and push after a successful write.
++- If a note must be changed with a direct file-writing tool, run `/home/openclaw/.local/bin/obsidian-git-sync` immediately afterward.
++- A systemd timer also fetches, rebases, commits, and pushes every five minutes so edits from other devices reach the server.
++- Never claim that an edit is available on other devices if the Git sync command failed.
++
+ ## Note Format

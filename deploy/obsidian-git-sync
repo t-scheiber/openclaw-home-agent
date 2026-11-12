@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo="${OBSIDIAN_GIT_REPO:-/home/openclaw/Obsidian}"
+branch="${OBSIDIAN_GIT_BRANCH:-main}"
+remote="${OBSIDIAN_GIT_REMOTE:-origin}"
+
+if [[ ! -d "$repo/.git" ]]; then
+  echo "Obsidian Git repository not found: $repo" >&2
+  exit 1
+fi
+
+# Serialize timer runs and edit-triggered runs. Waiting is important: an edit
+# must not be left unpublished merely because the periodic sync had the lock.
+exec 9>"$repo/.git/obsidian-sync.lock"
+flock -w 120 9 || {
+  echo "Timed out waiting for the Obsidian sync lock" >&2
+  exit 1
+}
+
+git -C "$repo" fetch "$remote" "$branch"
+git -C "$repo" rebase --autostash "$remote/$branch"
+git -C "$repo" add --all
+
+if ! git -C "$repo" diff --cached --quiet; then
+  git -C "$repo" commit -m "OpenClaw sync: $(date --iso-8601=seconds)"
+fi
+
+if ! git -C "$repo" push "$remote" "HEAD:$branch"; then
+  # A device may have pushed between our fetch and push. Rebase once and retry.
+  git -C "$repo" fetch "$remote" "$branch"
+  git -C "$repo" rebase --autostash "$remote/$branch"
+  git -C "$repo" push "$remote" "HEAD:$branch"
+fi

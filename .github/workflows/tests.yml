@@ -1,0 +1,45 @@
+name: Offline tests
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+
+      - name: Install workspace dependencies
+        working-directory: workspace
+        run: npm ci --ignore-scripts
+
+      - name: Run workspace tests
+        working-directory: workspace
+        run: npm test
+
+      - name: Install digest service dependencies
+        working-directory: services/daily-news-digest
+        run: npm ci --ignore-scripts
+
+      - name: Run digest service tests
+        working-directory: services/daily-news-digest
+        run: npm test
+
+      - name: Check script syntax
+        run: |
+          for file in workspace/scripts/*.mjs workspace/scripts/lib/*.mjs services/daily-news-digest/src/*.js hooks/voice-capture/handler.js; do
+            node --check "$file"
+          done

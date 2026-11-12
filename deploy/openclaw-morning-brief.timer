@@ -1,0 +1,10 @@
+[Unit]
+Description=Send morning action brief at 07:15 Berlin time
+
+[Timer]
+OnCalendar=*-*-* 07:15:00 Europe/Berlin
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+

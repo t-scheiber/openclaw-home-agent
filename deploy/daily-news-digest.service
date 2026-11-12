@@ -1,0 +1,16 @@
+[Unit]
+Description=Generate and send the unified daily news digest
+Wants=network-online.target
+After=network-online.target openclaw-gateway.service
+OnFailure=daily-news-digest-failure@%n.service
+
+[Service]
+Type=oneshot
+User=openclaw
+Group=openclaw
+WorkingDirectory=/home/openclaw/.openclaw/services/daily-news-digest
+EnvironmentFile=/home/openclaw/.openclaw/services/daily-news-digest/.env
+ExecStart=/usr/bin/flock --nonblock /run/lock/daily-news-digest.lock /usr/bin/npm run run
+Nice=5
+UMask=0077
+TimeoutStartSec=15min

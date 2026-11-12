@@ -1,0 +1,12 @@
+# Loaded by apply-openclaw-firewall.sh. Only the gateway port is filtered;
+# every other input stays under the host's existing policy (policy accept).
+# 192.0.2.10 stands for the host that runs the tunnel connector.
+table inet openclaw_gateway {
+  chain input {
+    type filter hook input priority -10; policy accept;
+
+    iifname "lo" tcp dport 18789 accept
+    ip saddr 192.0.2.10 tcp dport 18789 accept
+    tcp dport 18789 drop
+  }
+}

@@ -1,0 +1,20 @@
+[Unit]
+Description=Prepare Alexa weather, calendars and TickTick morning briefing
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=openclaw
+Group=openclaw
+Environment=HOME=/home/openclaw
+Environment=PATH=/home/linuxbrew/.linuxbrew/bin:/usr/local/bin:/usr/bin:/bin
+EnvironmentFile=-/home/openclaw/.config/openclaw/gog-keyring.env
+EnvironmentFile=-/home/openclaw/.config/openclaw/op-service-account.env
+EnvironmentFile=-/home/openclaw/.config/openclaw/openrouter.env
+EnvironmentFile=-/home/openclaw/.config/openclaw/automation.env
+EnvironmentFile=/home/openclaw/.config/openclaw/morning-alexa.env
+WorkingDirectory=/home/openclaw/.openclaw/workspace
+ExecStart=/usr/bin/node scripts/alexa-morning.mjs --publish
+UMask=0077
+TimeoutStartSec=10min

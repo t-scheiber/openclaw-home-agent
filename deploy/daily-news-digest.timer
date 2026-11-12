@@ -1,0 +1,11 @@
+[Unit]
+Description=Run the unified daily news digest at 07:00 Berlin time
+
+[Timer]
+OnCalendar=*-*-* 07:00:00 Europe/Berlin
+Persistent=true
+Unit=daily-news-digest.service
+
+[Install]
+WantedBy=timers.target
+

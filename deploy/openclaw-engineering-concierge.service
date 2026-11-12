@@ -1,0 +1,18 @@
+[Unit]
+Description=Triage GitHub CI and review notifications with OpenClaw
+After=network-online.target openclaw-gateway.service
+Wants=network-online.target
+OnFailure=openclaw-automation-failure@%n.service
+
+[Service]
+Type=oneshot
+User=openclaw
+Group=openclaw
+Environment=HOME=/home/openclaw
+Environment=PATH=/home/linuxbrew/.linuxbrew/bin:/usr/local/bin:/usr/bin:/bin
+EnvironmentFile=/home/openclaw/.config/openclaw/automation.env
+WorkingDirectory=/home/openclaw/.openclaw/workspace
+ExecStart=/usr/bin/node scripts/engineering-concierge.mjs
+UMask=0077
+TimeoutStartSec=5min
+

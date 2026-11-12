@@ -1,0 +1,27 @@
+{
+  "timezone": "Europe/Berlin",
+  "schedule": "0 7 * * *",
+  "title": "Daily tech digest",
+  "whatsapp": {
+    "channel": "whatsapp",
+    "to": "+10000000000"
+  },
+  "queueFile": "memory/digest-queue.json",
+  "archiveDir": "memory/digests",
+  "maxWhatsAppChars": 3500,
+  "obsidian": {
+    "vaultDir": "/home/openclaw/Obsidian/Vault",
+    "dailySubdir": "Daily"
+  },
+  "pdf": {
+    "enabled": true,
+    "dir": "memory/digests/pdf"
+  },
+  "googleDrive": {
+    "enabled": true,
+    "remote": "gdrive:Speechify/Daily News Digest"
+  },
+  "speechify": {
+    "obsidianSubdir": "Daily/Speechify"
+  }
+}

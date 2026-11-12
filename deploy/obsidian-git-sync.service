@@ -1,0 +1,9 @@
+[Unit]
+Description=Sync OpenClaw Obsidian files with GitHub
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/obsidian-git-sync
+TimeoutStartSec=3min
